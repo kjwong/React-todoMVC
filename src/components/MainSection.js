@@ -5,7 +5,10 @@ import Footer from './Footer'
  const TODO_FILTERS = {
    SHOW_ALL: () => true,
    SHOW_ACTIVE: todo => !todo.completed,
-   SHOW_COMPLETED: todo => todo.completed
+   SHOW_COMPLETED: todo => todo.completed,
+   SHOW_HIGH_PRIORITY: todo => todo.priority === 3,
+   SHOW_MID_PRIORITY: todo => todo.priority === 2,
+   SHOW_LOW_PRIORITY: todo => todo.priority === 1
  }
 
  export default class MainSection extends Component {
@@ -22,6 +25,11 @@ import Footer from './Footer'
 
    handleShow = filter => {
      this.setState({ filter })
+   }
+
+   orderByPriority = (is_descending) => {
+     const lambda = x => is_descending * -1 * x.priority
+     this.state.todos.sort(lambda)
    }
 
    renderToggleAll(completedCount) {
@@ -69,10 +77,15 @@ import Footer from './Footer'
          {this.renderToggleAll(completedCount)}
          <ul className="todo-list">
            {filteredTodos.map(todo =>
-             <TodoItem key={todo.id} todo={todo} {...actions} />
+            <div>
+              <span style="red">Priority: {todo.priority}</span>
+              <TodoItem key={todo.id} todo={todo} {...actions} />
+            </div>
            )}
          </ul>
          {this.renderFooter(completedCount)}
+         <button onClick={this.orderByPriority(true)}>Order by Descending</button>
+         <button onClick={this.orderByPriority(false)}>Order by Ascending</button>
        </section>
      )
    }
